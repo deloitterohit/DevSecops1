@@ -13,8 +13,8 @@ on:
     branches: [ main ]
 
 env:
-  app-name: "cd-simplefeedreader"
-  rg-name: "cd-dotnetactions"
+  app-name: "webappname01"
+  rg-name: "AzureTutorial"
 
 jobs:
   build:
