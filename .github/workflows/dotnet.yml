@@ -18,15 +18,6 @@ env:
 
 jobs:
   sonarcloud:
-    name: Build
-on:
-  push:
-    branches:
-      - master
-  pull_request:
-    types: [opened, synchronize, reopened]
-jobs:
-  sonarcloud:
     name: Sonar Cloud
     runs-on: windows-latest
     steps:
