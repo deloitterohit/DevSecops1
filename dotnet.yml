@@ -1,0 +1,170 @@
+name: .NET
+
+on:
+  workflow_dispatch:
+    inputs:
+      reason:
+        description: 'The reason for running the workflow'
+        required: true
+        default: 'Manual build from GitHub UI'
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+env:
+  app-name: "webappname02"
+  rg-name: "AzureTutorial"
+
+jobs:
+  sonarcloud:
+    name: Sonar Cloud Build & Analyze
+    runs-on: windows-latest
+    steps:
+      - name: Set up JDK 11
+        uses: actions/setup-java@v1
+        with:
+          java-version: 1.11
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0  # Shallow clones should be disabled for a better relevancy of analysis
+      - name: Cache SonarCloud packages
+        uses: actions/cache@v1
+        with:
+          path: ~\sonar\cache
+          key: ${{ runner.os }}-sonar
+          restore-keys: ${{ runner.os }}-sonar
+      - name: Cache SonarCloud scanner
+        id: cache-sonar-scanner
+        uses: actions/cache@v1
+        with:
+          path: .\.sonar\scanner
+          key: ${{ runner.os }}-sonar-scanner
+          restore-keys: ${{ runner.os }}-sonar-scanner
+      - name: Install SonarCloud scanner
+        if: steps.cache-sonar-scanner.outputs.cache-hit != 'true'
+        shell: powershell
+        run: |
+          New-Item -Path .\.sonar\scanner -ItemType Directory
+          dotnet tool update dotnet-sonarscanner --tool-path .\.sonar\scanner
+      - name: Build and analyze
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        shell: powershell
+        run: |
+          .\.sonar\scanner\dotnet-sonarscanner begin /k:"manualprojectkey" /o:"deloitterohit-123" /d:sonar.login="${{ secrets.SONAR_TOKEN }}" /d:sonar.host.url="https://sonarcloud.io"
+          dotnet restore
+          dotnet build --no-restore
+          .\.sonar\scanner\dotnet-sonarscanner end /d:sonar.login="${{ secrets.SONAR_TOKEN }}"
+  
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: 'Print manual run reason'
+      if: ${{ github.event_name == 'workflow_dispatch' }}
+      run: |
+        echo 'Reason: ${{ github.event.inputs.reason }}'
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: 6.0.x
+    - name: Restore dependencies
+      run: dotnet restore
+    - name: Build
+      run: dotnet build --no-restore
+    - name: Test
+      run: dotnet test --no-build --verbosity normal
+    - name: Publish
+      run: dotnet publish SimpleFeedReader/SimpleFeedReader.csproj -c Release -o website
+    - name: Upload a Build Artifact
+      uses: actions/upload-artifact@v2.2.2
+      with:
+        name: website
+        path: website/**
+        if-no-files-found: error
+  
+  deploy_staging:
+    needs: build
+    runs-on: ubuntu-latest
+
+    environment:
+      name: STAGING
+      url: ${{ steps.deploywebapp.outputs.webapp-url }}
+
+    steps:
+    - name: Download a Build Artifact
+      uses: actions/download-artifact@v2.0.8
+      with:
+        name: website
+        path: website
+
+    - name: Login via Azure CLI
+      uses: azure/login@v1
+      with:
+        creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+    - name: Deploy web app
+      id: deploywebapp
+      uses: azure/webapps-deploy@v2
+      with:
+        app-name: ${{ env.app-name }}
+        slot-name: staging
+        package: website
+
+    - name: Update config
+      uses: Azure/appservice-settings@v1
+      with:
+       app-name: ${{ env.app-name }}
+       slot-name: staging
+       app-settings-json: |
+         [
+             {
+                 "name": "UI:Index:Header",
+                 "value": "${{ secrets.INDEX_HEADER }}",
+                 "slotSetting": true
+             }
+         ]
+
+    - name: az cli logout
+      run: az logout
+
+  deploy_prod:
+    needs: deploy_staging
+    runs-on: ubuntu-latest
+
+    environment:
+      name: PROD
+      url: ${{ steps.slot_swap.outputs.url }}
+
+    steps:
+    - name: Login via Azure CLI
+      uses: azure/login@v1
+      with:
+        creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+    - name: Swap staging slot into production
+      id: slot_swap
+      run: |
+        az webapp deployment slot swap -g ${{ env.rg-name }} -n ${{ env.app-name }} -s staging
+        url=$(az webapp show -g ${{ env.rg-name }} -n ${{ env.app-name }} --query "defaultHostName" -o tsv)
+        echo "::set-output name=url::http://$url"
+
+    - name: Update config
+      uses: Azure/appservice-settings@v1
+      with:
+       app-name: ${{ env.app-name }}
+       app-settings-json: |
+         [
+             {
+                 "name": "UI:Index:Header",
+                 "value": "${{ secrets.INDEX_HEADER }}",
+                 "slotSetting": true
+             }
+         ]
+
+    - name: az cli logout
+      run: az logout

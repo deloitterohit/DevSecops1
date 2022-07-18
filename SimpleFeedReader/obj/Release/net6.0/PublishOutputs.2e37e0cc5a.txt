@@ -1,0 +1,11 @@
+/Users/rohitrajkumar/Desktop/development/simple-feed-reader/website/SimpleFeedReader
+/Users/rohitrajkumar/Desktop/development/simple-feed-reader/website/appsettings.Development.json
+/Users/rohitrajkumar/Desktop/development/simple-feed-reader/website/appsettings.json
+/Users/rohitrajkumar/Desktop/development/simple-feed-reader/website/bundleconfig.json
+/Users/rohitrajkumar/Desktop/development/simple-feed-reader/website/SimpleFeedReader.dll
+/Users/rohitrajkumar/Desktop/development/simple-feed-reader/website/SimpleFeedReader.deps.json
+/Users/rohitrajkumar/Desktop/development/simple-feed-reader/website/SimpleFeedReader.runtimeconfig.json
+/Users/rohitrajkumar/Desktop/development/simple-feed-reader/website/SimpleFeedReader.pdb
+/Users/rohitrajkumar/Desktop/development/simple-feed-reader/website/AutoMapper.dll
+/Users/rohitrajkumar/Desktop/development/simple-feed-reader/website/AutoMapper.Extensions.Microsoft.DependencyInjection.dll
+/Users/rohitrajkumar/Desktop/development/simple-feed-reader/website/Microsoft.SyndicationFeed.ReaderWriter.dll
