@@ -76,6 +76,8 @@ jobs:
       run: msbuild /p:TargetFramework=net35
     - name: Test
       run: dotnet test --no-build --verbosity normal
+    - name: Set Perm
+      run: sudo chmod -R 777 /home
     - name: Publish
       run: dotnet publish WebGoat/WebGoat.NET.csproj -c Release -o website
     - name: Upload a Build Artifact
