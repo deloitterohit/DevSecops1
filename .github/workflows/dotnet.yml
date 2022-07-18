@@ -78,8 +78,6 @@ jobs:
       run: dotnet test --no-build --verbosity normal
     - name: Publish
       run: dotnet publish WebGoat/WebGoat.NET.csproj -c Release -o website
-    - name: Set Perm
-      run: sudo chown -R `whoami` /boot/efi
     - name: Upload a Build Artifact
       uses: actions/upload-artifact@v2.2.2
       with:
