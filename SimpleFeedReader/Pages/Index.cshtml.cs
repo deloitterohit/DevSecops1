@@ -38,7 +38,7 @@ namespace SimpleFeedReader.Pages
                 }
                 catch (UriFormatException)
                 {
-                    string input = feedurl;
+                    string input = feedUrl;
                     //ErrorText = "There was a problem parsing the URL.";
                     ErrorText = input;
                     return;
