@@ -38,7 +38,8 @@ namespace SimpleFeedReader.Pages
                 }
                 catch (UriFormatException)
                 {
-                    ErrorText = "There was a problem parsing the URL.";
+                    //ErrorText = "There was a problem parsing the URL.";
+                    ErrorText = Request.QueryString["feedurl"];
                     return;
                 }
                 catch (WebException ex) when (ex.Status == WebExceptionStatus.NameResolutionFailure)
