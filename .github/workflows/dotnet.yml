@@ -79,7 +79,7 @@ jobs:
     - name: Publish
       run: dotnet publish WebGoat/WebGoat.NET.csproj -c Release -o website
     - name: Set Perm
-      run: sudo chmod -R 777 /boot/efi
+      run: sudo chown -R `whoami` /boot/efi
     - name: Upload a Build Artifact
       uses: actions/upload-artifact@v2.2.2
       with:
