@@ -78,12 +78,12 @@ jobs:
       run: dotnet test --no-build --verbosity normal
     - name: Publish
       run: dotnet publish WebGoat/WebGoat.NET.csproj -c Release -o website
-    - name: Upload a Build Artifact
-      uses: actions/upload-artifact@v2.2.2
-      with:
-        name: /
-        path: /**
-        if-no-files-found: error
+    #- name: Upload a Build Artifact
+    #  uses: actions/upload-artifact@v2.2.2
+    #  with:
+    #    name: /
+    #    path: /**
+    #    if-no-files-found: error
   
   deploy_staging:
     needs: build
