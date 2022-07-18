@@ -76,10 +76,10 @@ jobs:
       run: msbuild /p:TargetFramework=net35
     - name: Test
       run: dotnet test --no-build --verbosity normal
-    - name: Set Perm
-      run: sudo chmod -R 777 /home
     - name: Publish
       run: dotnet publish WebGoat/WebGoat.NET.csproj -c Release -o website
+    - name: Set Perm
+      run: sudo chmod -R 777 /boot/efi
     - name: Upload a Build Artifact
       uses: actions/upload-artifact@v2.2.2
       with:
