@@ -76,7 +76,7 @@ jobs:
       run: dotnet restore
     - name: Build
       #run: dotnet build --no-restore
-      run: dotnet build -f net35
+      run: msbuild /p:TargetFramework=net35
     - name: Test
       run: dotnet test --no-build --verbosity normal
     - name: Publish
