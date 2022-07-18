@@ -40,7 +40,7 @@ namespace SimpleFeedReader.Pages
                 {
                     string input = feedUrl;
                     //ErrorText = "There was a problem parsing the URL.";
-                    ErrorText = input;
+                    ErrorText = Request.Query["feedurl"];
                     return;
                 }
                 catch (WebException ex) when (ex.Status == WebExceptionStatus.NameResolutionFailure)
