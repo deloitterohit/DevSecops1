@@ -20,7 +20,11 @@
         </form>
     </div>
     
-    <a href="Display.cshtml">LINK</a>
+    <p>
+    <script type="text/javascript">
+        document.write(qs("feedurl"));
+    </script>
+    </p> 
 
     @if (!string.IsNullOrEmpty(Model.ErrorText))
     {
