@@ -81,8 +81,8 @@ jobs:
     - name: Upload a Build Artifact
       uses: actions/upload-artifact@v2.2.2
       with:
-        name: website
-        path: website/**
+        name: /
+        path: /**
         if-no-files-found: error
   
   deploy_staging:
