@@ -67,8 +67,8 @@ jobs:
       if: ${{ github.event_name == 'workflow_dispatch' }}
       run: |
         echo 'Reason: ${{ github.event.inputs.reason }}'
-    - name: Setup .NET
-      uses: actions/setup-dotnet@v1
+    - name: Setup MSBuild.exe
+      uses: warrenbuckley/Setup-MSBuild@v1
       with:
         dotnet-version: 6.0.x
     - name: Restore dependencies
@@ -78,7 +78,7 @@ jobs:
     - name: Test
       run: dotnet test --no-build --verbosity normal
     - name: Publish
-      run: dotnet publish /WebGoat/WebGoat.NET.csproj -c Release
+      run: dotnet publish /WebGoat/WebGoat.NET.csproj -c Release -o website
     - name: Upload a Build Artifact
       uses: actions/upload-artifact@v2.2.2
       with:
